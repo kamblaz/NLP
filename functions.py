@@ -17,7 +17,7 @@ import csv
 from stempel import StempelStemmer
 
 
-def loadDataFromCSV(filename):
+def load_data_from_CSV(filename):
     with open(filename, newline='', encoding="utf-8") as f:
         reader = csv.reader(f)
         data = list(reader)
@@ -49,11 +49,9 @@ def f(x):
         3.8: 17,
         4.0: 18,
         4.2: 19,
-        4.3: 20,
-        4.5: 21,
-        4.7: 22,
-        4.8: 23,
-        5.0: 24,
+        4.5: 20,
+        4.8: 21,
+        5.0: 22,
     }[x]
 
 
@@ -79,67 +77,60 @@ def g(x):
         17: 3.8,
         18: 4.0,
         19: 4.2,
-        20: 4.3,
-        21: 4.5,
-        22: 4.7,
-        23: 4.8,
-        24: 5.0,
+        20: 4.5,
+        21: 4.8,
+        22: 5.0,
     }[x]
 
 
-def count_number_of_samples_for_each_class(yall):
-    numberOfSamples = []
-    for i in range(0, 25):
-        numberOfSamples.append(yall.count(i))
-    return numberOfSamples
+def count_number_of_samples_for_each_class(yall, number_of_classes):
+    number_of_samples = []    
+    for i in range(0, number_of_classes):
+        number_of_samples.append(yall.count(i))
+        print(yall.count(i))
+    return number_of_samples
 
 
-def assign_weight(number_of_all_samples, number_of_clesses, number_of_samples_for_class):
-    return number_of_all_samples / (number_of_clesses * number_of_samples_for_class)
+def assign_weight(number_of_all_samples, number_of_classes, number_of_samples_for_each_class):
+    return number_of_all_samples / (number_of_classes * number_of_samples_for_each_class)
 
 
 def assign_weight_for_each_class(number_of_all_samples, number_of_samples_for_each_class):
     weights = []
     for i in range(0, len(number_of_samples_for_each_class)):
-        x = assign_weight(number_of_all_samples, len(
-            number_of_samples_for_each_class), number_of_samples_for_each_class[i])
+        x = assign_weight(number_of_all_samples, len(number_of_samples_for_each_class), number_of_samples_for_each_class[i])
         weights.append(x)
     return weights
 
-# Delete list of indices
-
-
-def deleteBasedOnIndicesList(org_lst_x, org_lst_y):
-    output_x = org_lst_x.copy()
-    output_y = org_lst_y.copy()
-    numberOfSamplesToTruncate = max(
-        count_number_of_samples_for_each_class(output_y))-2000
+def deleteBasedOnIndicesList(orgListX, orgListY):
+    outputX = orgListX.copy()
+    outputY = orgListY.copy()
+    numberOfSamplesToTruncate = max(countNumberOfSamplesForEachClass(outputY))-2000
     i = 0
-    # for i in range (0,len(output_y)-1):
-    while (i < len(output_y)):
+    while (i < len(outputY)):
         if(numberOfSamplesToTruncate <= 0):
             break
-        if (output_y[i] ==5.0):
-            del output_x[i]
-            del output_y[i]
+        if (outputY[i] ==5.0):
+            del outputX[i]
+            del outputY[i]
             i-=1
             numberOfSamplesToTruncate-=1
         i+=1
-    return output_x, output_y
+    return outputX, outputY
 
 
-def Convert(string):
+def convert(string):
     li = list(string.split(" "))
     return li
 
-def listToString(s):
+def list_to_string(s):
     str1 = ""
     for ele in s:
         str1 = str1 + str(ele) + " "
     return str1
 
 
-def Sorting(lst):
+def sorting(lst):
     lst2 = sorted(lst, key=len)
     return lst2
 
@@ -150,7 +141,7 @@ def perf_measure(y_actual, y_hat, rate):
     TN = 0
     FN = 0
 
-    for i in range(len(y_hat)):
+    for i in range(len(yHat)):
         if y_actual[i] == y_hat[i] == rate:
             TP += 1
         if y_hat[i] == rate and y_actual[i] != y_hat[i]:
@@ -171,3 +162,55 @@ def calculate_metrics(TP, FP, TN, FN):
         precision = TP
     NPV = TN/(TN+FN)
     return sensitivity, specificity, precision, NPV
+
+#def classify_rate(rate):
+    #classified_rate = np.argmax(rate)
+    #rate2 = rate.copy()
+    #maks = max(rate)
+    #rate2 = rate2[rate2 != maks]
+    #maks2 = max(rate2)
+    #maksIndex = np.where(rate == maks)[0][0]
+    #maksIndex2 = np.where(rate == maks2)[0][0] 
+    #result = -1
+    #temp = findBestRate(rate, maksIndex)
+    #temp2 = findBestRate(rate, maksIndex2)
+    #if (temp>temp2):
+    #    result = maksIndex
+    #else:
+    #    result = maksIndex2
+    #if (i>0 and i < len(rate)-1):
+     #   temp = rate[i] + 0.5*rate[i-1] + 0.5*rate[i+1]
+    #elif (i == 0):
+    #    temp = rate[i] + 0.5*rate[i+1]
+    #else:
+    #    temp = rate[i] + 0.5*rate [i-1]
+    #if (temp>maks):
+    #    maks = temp
+    #return result
+
+def findBestRate(rate, maksIndex):
+    if (maksIndex>0 and maksIndex<len(rate)-1):
+        temp = rate[maksIndex]+0.5*rate[maksIndex-1]+0.5*rate[maksIndex+1]
+    elif (maksIndex == 0):
+        temp = rate[maksIndex] + 0.5*rate[maksIndex+1]
+    else:
+        temp = rate[maksIndex] + 0.5*rate[maksIndex-1]
+    return temp
+
+def classify_rate(rate):
+    classified_rate = np.argmax(rate)
+    maks = 0
+    maks2 = 0
+    temp = 0
+    max_index = 0
+    for i in range (0, len(rate)):        
+        if (i>0 and i < len(rate)-1):
+            temp = rate[i] + 0.5*rate[i-1] + 0.5*rate[i+1]
+        elif (i == 0):
+            temp = rate[i] + 0.5*rate[i+1]
+        else:
+            temp = rate[i] + 0.5*rate [i-1]
+        if (temp>maks):
+            maks = temp
+            max_index = i
+    return max_index

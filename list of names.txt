@@ -19,3 +19,6 @@ mall
 mediamarkt
 wapteka
 oleole
+astratex
+ezebra
+bestprezenty

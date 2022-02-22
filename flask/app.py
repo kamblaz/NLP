@@ -21,10 +21,8 @@ def hello_world():
 
 @app.route('/getReview', methods=['POST'])
 def get_review():
-    print('flask')
     json_request = request.get_json()
     review = json_request['review']
-    print(rate_single_review(review, model))
     return str(rate_single_review(review, model))
 
 

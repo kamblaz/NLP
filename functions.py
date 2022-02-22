@@ -199,19 +199,16 @@ def findBestRate(rate, maksIndex):
     return temp
 
 def classify_rate(rate):
-    classified_rate = np.argmax(rate)
     maks = 0
-    maks2 = 0
-    temp = 0
     max_index = 0
-    for i in range (0, len(rate)):        
-        if (i>0 and i < len(rate)-1):
-            temp = rate[i] + 0.5*rate[i-1] + 0.5*rate[i+1]
-        elif (i == 0):
-            temp = rate[i] + 0.5*rate[i+1]
+    for i in range(0, len(rate)):
+        if 0 < i < len(rate) - 1:
+            temp = rate[i] + 0.5 * rate[i - 1] + 0.5 * rate[i + 1]
+        elif i == 0:
+            temp = rate[i] + 0.5 * rate[i + 1]
         else:
-            temp = rate[i] + 0.5*rate [i-1]
-        if (temp>maks):
+            temp = rate[i] + 0.5 * rate[i - 1]
+        if temp > maks:
             maks = temp
             max_index = i
     return max_index
